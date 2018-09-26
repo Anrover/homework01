@@ -32,7 +32,7 @@ import scala.collection.mutable.ListBuffer
 // и т.д.
 
 class Hangman(io: IODevice) {
-  def getHiddenWord(word: String, guessedLetters: ListBuffer[Char]): String ={
+  private def getHiddenWord(word: String, guessedLetters: ListBuffer[Char]): String ={
     var hiddenWord = ""
     for (letter <- word){
       if (guessedLetters.contains(letter))
@@ -43,7 +43,7 @@ class Hangman(io: IODevice) {
     hiddenWord
   }
 
-  def printGallows(countMistakes: Int): Unit ={
+  private def printGallows(countMistakes: Int): Unit ={
     if (countMistakes > 0)
       io.printLine(stages(countMistakes - 1))
     if (countMistakes == stages.length)
