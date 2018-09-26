@@ -1,5 +1,7 @@
 package fintech.homework01
 
+import scala.collection.mutable.ListBuffer
+
 // Используя функции io.readLine и io.printLine напишите игру "Виселица"
 // Пример ввода и тест можно найти в файле src/test/scala/fintech/homework01/HangmanTest.scala
 // Тест можно запустить через в IDE или через sbt (написав в консоли sbt test)
@@ -30,8 +32,46 @@ package fintech.homework01
 // и т.д.
 
 class Hangman(io: IODevice) {
+  def getHiddenWord(word: String, guessedLetters: ListBuffer[Char]): String ={
+    var hiddenWord = ""
+    for (letter <- word){
+      if (guessedLetters.contains(letter))
+        hiddenWord += letter
+      else
+        hiddenWord += '_'
+    }
+    hiddenWord
+  }
+
+  def printGallows(countMistakes: Int): Unit ={
+    if (countMistakes > 0)
+      io.printLine(stages(countMistakes - 1))
+    if (countMistakes == stages.length)
+      io.printLine("You are dead")
+  }
+
   def play(word: String): Unit = {
-    ???
+    var countMistakes: Int = 0
+    val guessedLetters: ListBuffer[Char] = ListBuffer()
+    while (countMistakes != stages.length){
+      val hiddenWord = getHiddenWord(word, guessedLetters)
+      io.printLine("Word: " + hiddenWord)
+      if (hiddenWord == word){
+        io.printLine("You WIN!!!")
+        return
+      }
+      io.printLine("Guess a letter:")
+      val input = io.readLine()
+      if (input.length == 1){
+        val guessLetter = input(0).toLower
+        if (!guessedLetters.contains(guessLetter) && !word.contains(guessLetter))
+          countMistakes += 1
+        guessedLetters.append(guessLetter)
+        printGallows(countMistakes)
+      }
+      else
+        io.printLine("Incorrect input")
+    }
   }
 
   val stages = List(
