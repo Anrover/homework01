@@ -1,6 +1,5 @@
 package fintech.homework01
 
-import scala.collection.mutable.ListBuffer
 
 // Используя функции io.readLine и io.printLine напишите игру "Виселица"
 // Пример ввода и тест можно найти в файле src/test/scala/fintech/homework01/HangmanTest.scala
@@ -32,15 +31,9 @@ import scala.collection.mutable.ListBuffer
 // и т.д.
 
 class Hangman(io: IODevice) {
-  private def getHiddenWord(word: String, guessedLetters: ListBuffer[Char]): String ={
-    var hiddenWord = ""
-    for (letter <- word){
-      if (guessedLetters.contains(letter))
-        hiddenWord += letter
-      else
-        hiddenWord += '_'
-    }
-    hiddenWord
+  private def getHiddenWord(word: String, guessedLetters: Set[Char]): String ={
+    for {letter <- word} yield {
+      if (!guessedLetters.contains(letter)) '_' else letter}
   }
 
   private def printGallows(countMistakes: Int): Unit ={
@@ -52,25 +45,27 @@ class Hangman(io: IODevice) {
 
   def play(word: String): Unit = {
     var countMistakes: Int = 0
-    val guessedLetters: ListBuffer[Char] = ListBuffer()
-    while (countMistakes != stages.length){
+    var guessedLetters: Set[Char] = Set()
+    var userWin = false
+    while (countMistakes != stages.length && !userWin){
       val hiddenWord = getHiddenWord(word, guessedLetters)
       io.printLine("Word: " + hiddenWord)
       if (hiddenWord == word){
         io.printLine("You WIN!!!")
-        return
+        userWin = true
       }
-      io.printLine("Guess a letter:")
-      val input = io.readLine()
-      if (input.length == 1){
-        val guessLetter = input(0).toLower
-        if (!guessedLetters.contains(guessLetter) && !word.contains(guessLetter))
-          countMistakes += 1
-        guessedLetters.append(guessLetter)
-        printGallows(countMistakes)
+      else {
+        io.printLine("Guess a letter:")
+        val input = io.readLine()
+        if (input.length == 1) {
+          val guessLetter = input(0).toLower
+          if (!guessedLetters.contains(guessLetter) && !word.contains(guessLetter))
+            countMistakes += 1
+          guessedLetters += guessLetter
+          printGallows(countMistakes)
+        }
+        else io.printLine("Incorrect input")
       }
-      else
-        io.printLine("Incorrect input")
     }
   }
 
