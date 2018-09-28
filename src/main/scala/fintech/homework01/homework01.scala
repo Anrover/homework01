@@ -32,8 +32,8 @@ package fintech.homework01
 
 class Hangman(io: IODevice) {
   private def getHiddenWord(word: String, guessedLetters: Set[Char]): String ={
-    for {letter <- word} yield {
-      if (!guessedLetters.contains(letter)) '_' else letter}
+    for {letter <- word} yield
+      if (!guessedLetters.contains(letter)) '_' else letter
   }
 
   private def printGallows(countMistakes: Int): Unit ={
